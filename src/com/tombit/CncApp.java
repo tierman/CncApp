@@ -12,23 +12,16 @@ public class CncApp extends JPanel {
 
     private JButton readFileButton;
     private JPanel mainPanel;
+    private JPanel chartPanel;
     private JButton saveFileButton;
     private JTextArea log;
     private JPanel buttonPanel;
+    private JScrollPane logScrollPane;
     private final JFileChooser fc = new JFileChooser();
     static private final String newline = "\n";
 
     public CncApp() {
-        mainPanel = new JPanel();
-        readFileButton = new JButton("Read file");
-        buttonPanel = new JPanel();
-        //Create the log first, because the action listeners
-        //need to refer to it.
-        log = new JTextArea(5,20);
-        log.setMargin(new Insets(5,5,5,5));
-        log.setEditable(false);
-        JScrollPane logScrollPane = new JScrollPane(log);
-
+        log.append("Start" + newline);
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         readFileButton.addActionListener(e -> {
             FileOpenService fos = null;
@@ -36,7 +29,8 @@ public class CncApp extends JPanel {
 
             try {
                 fos = (FileOpenService) ServiceManager.lookup("javax.jnlp.FileOpenService");
-            } catch (UnavailableServiceException exc) { }
+            } catch (UnavailableServiceException exc) {
+            }
 
             if (fos != null) {
                 try {
@@ -61,17 +55,19 @@ public class CncApp extends JPanel {
                 }
             }
         });
-        buttonPanel.add(readFileButton);
-        buttonPanel.add(saveFileButton);
-        mainPanel.add(logScrollPane);
-        mainPanel.add(buttonPanel);
+        //buttonPanel.add(readFileButton);
+        //buttonPanel.add(saveFileButton);
+        //mainPanel.add(logScrollPane);
+        //mainPanel.add(buttonPanel);
+        //mainPanel.add(chartPanel);
     }
 
-    public static void main(String [] params) {
+    public static void main(String[] params) {
         JFrame frame = new JFrame("CncApp");
         frame.setContentPane(new CncApp().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(800,600));
+        frame.setMinimumSize(new Dimension(800, 600));
+        frame.setResizable(true);
         frame.pack();
         frame.setVisible(true);
     }
