@@ -1,12 +1,12 @@
 package com.tombit;
 
-import javax.jnlp.FileContents;
-import javax.jnlp.FileOpenService;
-import javax.jnlp.ServiceManager;
-import javax.jnlp.UnavailableServiceException;
+import com.tombit.chart.ChartPanel;
+import com.tombit.io.ReadFileButton;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CncApp extends JPanel {
 
@@ -17,49 +17,17 @@ public class CncApp extends JPanel {
     private JTextArea log;
     private JPanel buttonPanel;
     private JScrollPane logScrollPane;
+    private Map<Integer, String> readedFile = new HashMap<>();
+    private Map<Integer, Double> points;
+    private Map<Integer, Double> pointsModified;
     private final JFileChooser fc = new JFileChooser();
-    static private final String newline = "\n";
+    public static final String NEWLINE = "\n";
 
     public CncApp() {
-        log.append("Start" + newline);
+        log.append("Start" + NEWLINE);
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        readFileButton.addActionListener(e -> {
-            FileOpenService fos = null;
-            FileContents fileContents = null;
+        readFileButton.addActionListener(new ReadFileButton(this));
 
-            try {
-                fos = (FileOpenService) ServiceManager.lookup("javax.jnlp.FileOpenService");
-            } catch (UnavailableServiceException exc) {
-            }
-
-            if (fos != null) {
-                try {
-                    fileContents = fos.openFileDialog(null, null);
-                } catch (Exception exc) {
-                    log.append("Open command failed: "
-                            + exc.getLocalizedMessage()
-                            + newline);
-                    log.setCaretPosition(log.getDocument().getLength());
-                }
-            }
-
-            if (e.getSource() == readFileButton) {
-                int returnVal = fc.showOpenDialog(CncApp.this);
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    //This is where a real application would open the file.
-                    log.append("Opening: " + file.getName() + "." + newline);
-                } else {
-                    log.append("Open command cancelled by user." + newline);
-                }
-            }
-        });
-        //buttonPanel.add(readFileButton);
-        //buttonPanel.add(saveFileButton);
-        //mainPanel.add(logScrollPane);
-        //mainPanel.add(buttonPanel);
-        //mainPanel.add(chartPanel);
     }
 
     public static void main(String[] params) {
@@ -70,5 +38,21 @@ public class CncApp extends JPanel {
         frame.setResizable(true);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public Map<Integer, String> getReadedFile() {
+        return readedFile;
+    }
+
+    public JTextArea getLog() {
+        return log;
+    }
+
+    public JFileChooser getFileChooser() {
+        return fc;
+    }
+
+    private void createUIComponents() {
+        chartPanel = new ChartPanel(points);
     }
 }
