@@ -1,25 +1,29 @@
 package com.tombit.chart;
 
+import com.tombit.CncApp;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.util.Map;
 
 public class ChartPanel extends JPanel implements MouseWheelListener {
 
-    private final Map<Integer, Double> points;
+    private final CncApp cncApp;
     private double chartZoomFactor = 1;
     private double chartPreviousZoomFactor = 1;
     private boolean zoomer;
     private double xOffset = 0;
     private double yOffset = 0;
+    private double chartScale = 1;
 
-    public ChartPanel(Map<Integer, Double> points) {
-        this.setPreferredSize(new Dimension(2000, 1000));
-        this.points = points;
+    public ChartPanel(CncApp cncApp) {
+        this.cncApp = cncApp;
         addMouseWheelListener(this);
     }
 
@@ -30,31 +34,38 @@ public class ChartPanel extends JPanel implements MouseWheelListener {
         if (zoomer) {
             AffineTransform at = new AffineTransform();
 
-            double xRel = MouseInfo.getPointerInfo().getLocation().getX() - getLocationOnScreen().getX();
-            double yRel = MouseInfo.getPointerInfo().getLocation().getY() - getLocationOnScreen().getY();
+            //double xRel = MouseInfo.getPointerInfo().getLocation().getX() - getLocationOnScreen().getX();
+            //double yRel = MouseInfo.getPointerInfo().getLocation().getY() - getLocationOnScreen().getY();
 
-            double zoomDiv = chartZoomFactor / chartPreviousZoomFactor;
+            //double zoomDiv = chartZoomFactor / chartPreviousZoomFactor;
 
-            xOffset = (zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel;
-            yOffset = (zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel;
+            //xOffset = (zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel;
+            //yOffset = (zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel;
 
-            at.translate(xOffset, yOffset);
+            //at.translate(xOffset, yOffset);
             at.scale(chartZoomFactor, chartZoomFactor);
             chartPreviousZoomFactor = chartZoomFactor;
             g2d.transform(at);
             zoomer = false;
         }
 
+        Axis
+        XYChart c = new LineChart("x", "y");//AreaChart(cncApp.getPointsBase().size(), cncApp.getPointsBase().size());
         Path2D path = new Path2D.Double();
-        path.moveTo(10, 10);
-//        while ()
-        path.lineTo(200, 800);
-        path.lineTo(900, 1000);
-        g2d.getTransform().getScaleX();
+        path.moveTo(0, 0);
+        cncApp.getPointsBase().forEach((integer, aDouble) -> {
+            path.lineTo(aDouble.intValue(), integer);
+            //cncApp.getLog().append(integer +" : "+aDouble + CncApp.NEWLINE);
+        });
+
+        this.setPreferredSize(new Dimension(1000000, cncApp.getPointsBase().size()));
+        //path.lineTo(900, 1000);
+        cncApp.getLog().append("Scale: " + g2d.getTransform().getScaleX() + CncApp.NEWLINE);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.draw(path);
         g2d.dispose();
+        chartScale = g2d.getTransform().getScaleX();
     }
 
     @Override
@@ -64,22 +75,19 @@ public class ChartPanel extends JPanel implements MouseWheelListener {
         if (e.getWheelRotation() < 0) {
             chartZoomFactor *= 1.1;
             Dimension d = new Dimension();
-            d.setSize(this.getSize().width * 1.1, this.getSize().height * 1.1);
+            d.setSize(this.getSize().width * chartScale, this.getSize().height * chartScale);
             this.setPreferredSize(d);
             this.revalidate();
-
             repaint();
-            this.updateUI();
         }
         //Zoom out
-        if (e.getWheelRotation() > 0) {
+        if (e.getWheelRotation() > 0 && Double.compare(chartScale, 1) > 0) {
             chartZoomFactor /= 1.1;
             Dimension d = new Dimension();
-            d.setSize(this.getSize().width / 1.1, this.getSize().height / 1.1);
+            d.setSize(this.getSize().width / chartScale, this.getSize().height / chartScale);
             this.setPreferredSize(d);
             this.revalidate();
             repaint();
-            this.updateUI();
         }
     }
 

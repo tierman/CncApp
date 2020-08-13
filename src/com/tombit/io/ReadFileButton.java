@@ -28,6 +28,14 @@ public class ReadFileButton implements ActionListener {
             cncApp.getLog().append("Opening: " + fileInput.getName() + "." + CncApp.NEWLINE);
             cncApp.getReadedFile().clear();
             cncApp.getReadedFile().putAll(readFile(fileInput));
+
+            cncApp.getPointsBase().clear();
+            cncApp.getReadedFile().forEach((line, value) -> {
+                if (isNumeric(value)) {
+                    cncApp.getPointsBase().put(line, Double.valueOf(value));
+                }
+            });
+            //cncApp.getPointsBase()
             cncApp.getLog().append("Readed positions: " + cncApp.getReadedFile().size() + CncApp.NEWLINE);
 
             cncApp.getChartPanel().setPreferredSize(new Dimension(cncApp.getReadedFile().size(), cncApp.getReadedFile().size()));

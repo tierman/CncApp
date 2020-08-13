@@ -22,8 +22,8 @@ public class CncApp extends JPanel {
     private JButton zoomOriginalSize;
     private JScrollPane chartPanelJScrollPane;
     private Map<Integer, String> readedFile = new HashMap<>();
-    private Map<Integer, Double> points;
-    private Map<Integer, Double> pointsModified;
+    private Map<Integer, Double> pointsBase = new HashMap<>();
+    private Map<Integer, Double> pointsModified = new HashMap<>();
     private final JFileChooser fc = new JFileChooser();
     public static final String NEWLINE = "\n";
 
@@ -35,6 +35,12 @@ public class CncApp extends JPanel {
         zoomOUTButton.addActionListener(new ZoomOutActionListener(this));
         zoomOriginalSize.addActionListener(new OriginalSizeActionListener(this));
         chartPanel.addComponentListener(new ResizeListener(this));
+        chartPanelJScrollPane.getHorizontalScrollBar().addAdjustmentListener(e -> {
+            //chartPanel.revalidate();
+        });
+        chartPanelJScrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            //chartPanel.revalidate();
+        });
         //chartPanelJScrollPane.setViewportView(chartPanel);
     }
 
@@ -65,6 +71,14 @@ public class CncApp extends JPanel {
     }
 
     private void createUIComponents() {
-        chartPanel = new ChartPanel(points);
+        chartPanel = new ChartPanel(this);
+    }
+
+    public Map<Integer, Double> getPointsBase() {
+        return pointsBase;
+    }
+
+    public Map<Integer, Double> getPointsModified() {
+        return pointsModified;
     }
 }
