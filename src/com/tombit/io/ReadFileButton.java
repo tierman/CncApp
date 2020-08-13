@@ -3,6 +3,7 @@ package com.tombit.io;
 import com.tombit.CncApp;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -27,7 +28,12 @@ public class ReadFileButton implements ActionListener {
             cncApp.getLog().append("Opening: " + fileInput.getName() + "." + CncApp.NEWLINE);
             cncApp.getReadedFile().clear();
             cncApp.getReadedFile().putAll(readFile(fileInput));
-            //This is where a real application would open the file.
+            cncApp.getLog().append("Readed positions: " + cncApp.getReadedFile().size() + CncApp.NEWLINE);
+
+            cncApp.getChartPanel().setPreferredSize(new Dimension(cncApp.getReadedFile().size(), cncApp.getReadedFile().size()));
+            cncApp.getChartPanel().revalidate();
+            cncApp.getChartPanel().repaint();
+
             cncApp.getLog().append("File readed successfully." + CncApp.NEWLINE);
 
         } else {

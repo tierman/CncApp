@@ -1,6 +1,6 @@
 package com.tombit;
 
-import com.tombit.chart.ChartPanel;
+import com.tombit.chart.*;
 import com.tombit.io.ReadFileButton;
 
 import javax.swing.*;
@@ -17,6 +17,10 @@ public class CncApp extends JPanel {
     private JTextArea log;
     private JPanel buttonPanel;
     private JScrollPane logScrollPane;
+    private JButton zoomINButton;
+    private JButton zoomOUTButton;
+    private JButton zoomOriginalSize;
+    private JScrollPane chartPanelJScrollPane;
     private Map<Integer, String> readedFile = new HashMap<>();
     private Map<Integer, Double> points;
     private Map<Integer, Double> pointsModified;
@@ -27,7 +31,11 @@ public class CncApp extends JPanel {
         log.append("Start" + NEWLINE);
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         readFileButton.addActionListener(new ReadFileButton(this));
-
+        zoomINButton.addActionListener(new ZoomInActionListener(this));
+        zoomOUTButton.addActionListener(new ZoomOutActionListener(this));
+        zoomOriginalSize.addActionListener(new OriginalSizeActionListener(this));
+        chartPanel.addComponentListener(new ResizeListener(this));
+        //chartPanelJScrollPane.setViewportView(chartPanel);
     }
 
     public static void main(String[] params) {
@@ -42,6 +50,10 @@ public class CncApp extends JPanel {
 
     public Map<Integer, String> getReadedFile() {
         return readedFile;
+    }
+
+    public JPanel getChartPanel() {
+        return this.chartPanel;
     }
 
     public JTextArea getLog() {
