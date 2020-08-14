@@ -59,8 +59,8 @@ public class ChartPanel extends JPanel implements MouseWheelListener {
             g2d.drawRect(aDouble.intValue(), integer, 1, 1);
         });
 
-        for (int i = 0 ; i< cncApp.getPointsBase().size(); ++i) {
-            double aaa = cncApp.getPointsBase().get(i);
+        for (int i = 1 ; i< cncApp.getPointsBase().size(); ++i) {
+            Double aaa = cncApp.getPointsBase().get(i);
             if (aaa.intValue() > maximumHeight) {
                 maximumHeight = aaa.intValue();
             }
