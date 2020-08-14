@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.intellij:forms_rt:7.0.3'
+}
+
+applicationName = 'cnc-app'
+application {
+    mainClass = 'com.tombit.CncApp'
+}
+
+jar {
+    baseName = 'cnc-app'
+    manifest {
+        attributes "Main-Class": 'com.tombit.CncApp'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+}
