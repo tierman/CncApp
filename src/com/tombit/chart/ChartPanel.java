@@ -49,21 +49,29 @@ public class ChartPanel extends JPanel implements MouseWheelListener {
             zoomer = false;
         }
 
-        Axis
+   /*     Axis
         XYChart c = new LineChart("x", "y");//AreaChart(cncApp.getPointsBase().size(), cncApp.getPointsBase().size());
         Path2D path = new Path2D.Double();
         path.moveTo(0, 0);
+   */
+        Integer maximumHeight = 0;
         cncApp.getPointsBase().forEach((integer, aDouble) -> {
-            path.lineTo(aDouble.intValue(), integer);
-            //cncApp.getLog().append(integer +" : "+aDouble + CncApp.NEWLINE);
+            g2d.drawRect(aDouble.intValue(), integer, 1, 1);
         });
 
-        this.setPreferredSize(new Dimension(1000000, cncApp.getPointsBase().size()));
+        for (int i = 0 ; i< cncApp.getPointsBase().size(); ++i) {
+            double aaa = cncApp.getPointsBase().get(i);
+            if (aaa.intValue() > maximumHeight) {
+                maximumHeight = aaa.intValue();
+            }
+
+        }
+        this.setPreferredSize(new Dimension(maximumHeight + 50, cncApp.getPointsBase().size()));
         //path.lineTo(900, 1000);
         cncApp.getLog().append("Scale: " + g2d.getTransform().getScaleX() + CncApp.NEWLINE);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.draw(path);
+        //g2d.draw(path);
         g2d.dispose();
         chartScale = g2d.getTransform().getScaleX();
     }
